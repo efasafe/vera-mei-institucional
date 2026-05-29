@@ -8,6 +8,7 @@ import { ServicesPage } from "./components/pages/ServicesPage";
 import { FAQPage } from "./components/pages/FAQPage";
 import { ContactPage } from "./components/pages/ContactPage";
 import { BlogPage } from "./components/pages/BlogPage";
+import { BlogPostPage } from "./components/pages/BlogPostPage";
 import { LoginPage } from "./components/pages/LoginPage";
 import { SignupPage } from "./components/pages/SignupPage";
 import { AdminDashboardNew } from "./components/pages/AdminDashboardNew";
@@ -41,6 +42,7 @@ export default function App() {
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/contato" element={<ContactPage />} />
                   <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/blog/:id" element={<BlogPostPage />} />
                 </Routes>
               </main>
               <Footer />

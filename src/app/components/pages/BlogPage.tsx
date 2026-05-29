@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { ArrowRight, Clock, ChevronRight, Search } from "lucide-react";
+import { Clock, ChevronRight, Search } from "lucide-react";
 import { FirebasePosts } from '../../utils/firebasePosts';
 
 const fadeUp = {
@@ -88,6 +89,7 @@ const stripHtml = (html: string): string => {
 };
 
 export function BlogPage() {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -189,85 +191,6 @@ export function BlogPage() {
         </div>
       </section>
 
-      {/* ── FEATURED POST ── */}
-      {!loading && filteredPosts.length > 0 && (
-        <section className="py-16" style={{ background: "var(--vera-mei-cream)" }}>
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="grid lg:grid-cols-2 gap-8 rounded-3xl overflow-hidden"
-              style={{
-                background: "white",
-                border: "1px solid var(--vera-mei-border)",
-                boxShadow: "0 8px 40px rgba(107,48,80,0.1)",
-              }}
-            >
-              {filteredPosts[0].images && filteredPosts[0].images.length > 0 ? (
-                <div className="aspect-[4/3] lg:aspect-auto overflow-hidden">
-                  <img
-                    src={filteredPosts[0].images[0]}
-                    alt={filteredPosts[0].title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-[4/3] lg:aspect-auto overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
-                  <span className="text-4xl" style={{ color: "var(--vera-mei-wine)" }}>📝</span>
-                </div>
-              )}
-              <div className="p-8 lg:p-10 flex flex-col justify-center">
-                <div className="flex items-center gap-3 mb-4">
-                  <span
-                    className="text-xs px-2.5 py-1 rounded-full"
-                    style={{
-                      background: "var(--vera-mei-blush)",
-                      color: "var(--vera-mei-wine)",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Mais Recente
-                  </span>
-                  {filteredPosts[0].id.startsWith('placeholder-') && (
-                    <span className="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
-                      Exemplo
-                    </span>
-                  )}
-                </div>
-                <h2
-                  className="mb-4 leading-tight"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    color: "var(--vera-mei-dark)",
-                    fontSize: "clamp(1.4rem, 2.5vw, 1.9rem)",
-                    fontWeight: 600,
-                  }}
-                >
-                  {filteredPosts[0].title}
-                </h2>
-                <p
-                  className="text-sm leading-relaxed mb-6"
-                  style={{ color: "var(--vera-mei-muted)", lineHeight: 1.8 }}
-                >
-                  {stripHtml(filteredPosts[0].content).substring(0, 200)}
-                  {stripHtml(filteredPosts[0].content).length > 200 ? '...' : ''}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs" style={{ color: "var(--vera-mei-muted)" }}>
-                    <Clock size={11} />
-                    <span>{estimateReadTime(filteredPosts[0].content)}</span>
-                    <span>·</span>
-                    <span>{formatDate(filteredPosts[0].createdAt)}</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
       {/* ── POSTS GRID ── */}
       <section className="py-16" style={{ background: "var(--vera-mei-light)" }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -309,7 +232,7 @@ export function BlogPage() {
                   </p>
                 </div>
               ) : (
-                filteredPosts.slice(1).map((post) => (
+                filteredPosts.map((post) => (
                   <motion.article
                     key={post.id}
                     layout
@@ -317,6 +240,7 @@ export function BlogPage() {
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={fadeUp}
+                    onClick={() => navigate(`/blog/${post.id}`)}
                     className="rounded-2xl overflow-hidden group cursor-pointer hover:scale-[1.01] transition-all duration-300 relative"
                     style={{
                       background: "white",
