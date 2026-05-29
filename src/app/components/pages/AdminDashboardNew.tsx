@@ -301,18 +301,6 @@ export function AdminDashboardNew() {
           </div>
         )}
 
-        {/* Debug info */}
-        {realPosts.length > 0 && (
-          <div className="mx-8 mt-6 bg-vera-mei-sage/10 border border-vera-mei-sage/30 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="text-vera-mei-sage text-xl">✅</div>
-              <p className="text-vera-mei-dark text-sm">
-                <strong>{realPosts.length}</strong> post(s) real(is) encontrado(s) no banco de dados
-              </p>
-            </div>
-          </div>
-        )}
-
         {/* Table */}
         <div className="flex-1 px-8 py-6">
           <div className="bg-white rounded-lg border border-vera-mei-wine/10 overflow-hidden">

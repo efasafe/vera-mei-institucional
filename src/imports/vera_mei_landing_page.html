@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --rosa:#D4537E;
+    --rosa-claro:#FBEAF0;
+    --rosa-escuro:#4B1528;
+    --coral:#D85A30;
+    --coral-claro:#FAECE7;
+    --laranja:#EF9F27;
+    --creme:#FDF6EE;
+    --terracota:#993C1D;
+    --cinza-escuro:#2C2C2A;
+    --cinza-medio:#888780;
+  }
+  body{font-family:'DM Sans',sans-serif;background:#fff;color:var(--cinza-escuro);overflow-x:hidden}
+
+  /* NAV */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 3rem;position:sticky;top:0;background:rgba(255,255,255,0.96);backdrop-filter:blur(8px);z-index:100;border-bottom:1px solid #f0ece8}
+  .nav-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--rosa-escuro);letter-spacing:-0.5px}
+  .nav-logo span{color:var(--coral)}
+  .nav-links{display:flex;gap:2rem;list-style:none}
+  .nav-links a{text-decoration:none;font-size:.9rem;font-weight:500;color:var(--cinza-escuro);opacity:.7;transition:.2s}
+  .nav-links a:hover{opacity:1;color:var(--rosa)}
+  .nav-cta{background:var(--rosa);color:#fff;border:none;padding:.65rem 1.5rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:.2s}
+  .nav-cta:hover{background:var(--rosa-escuro)}
+
+  /* HERO */
+  .hero{display:grid;grid-template-columns:1fr 1fr;min-height:88vh;overflow:hidden}
+  .hero-left{background:var(--creme);padding:5rem 3rem 5rem 4rem;display:flex;flex-direction:column;justify-content:center;position:relative}
+  .hero-left::before{content:'';position:absolute;top:-80px;left:-80px;width:300px;height:300px;background:radial-gradient(circle,#F4C0D1 0%,transparent 70%);pointer-events:none}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--rosa-claro);color:var(--rosa);font-size:.8rem;font-weight:500;padding:.4rem 1rem;border-radius:100px;margin-bottom:1.75rem;width:fit-content;border:1px solid #F4C0D1}
+  .hero-badge::before{content:'✦';font-size:.7rem}
+  .hero-title{font-family:'Playfair Display',serif;font-size:3.6rem;font-weight:900;line-height:1.05;color:var(--rosa-escuro);margin-bottom:1.5rem}
+  .hero-title em{color:var(--coral);font-style:italic}
+  .hero-subtitle{font-size:1.1rem;line-height:1.7;color:var(--cinza-escuro);opacity:.75;max-width:420px;margin-bottom:2.5rem}
+  .hero-actions{display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
+  .btn-primary{background:var(--rosa);color:#fff;border:none;padding:.9rem 2rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;transition:.2s;letter-spacing:.2px}
+  .btn-primary:hover{background:var(--rosa-escuro);transform:translateY(-1px)}
+  .btn-secondary{background:transparent;color:var(--cinza-escuro);border:1.5px solid #ddd;padding:.9rem 2rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;transition:.2s}
+  .btn-secondary:hover{border-color:var(--rosa);color:var(--rosa)}
+  .hero-social-proof{display:flex;align-items:center;gap:.75rem;margin-top:2rem}
+  .avatares{display:flex}
+  .avatares span{width:34px;height:34px;border-radius:50%;background:var(--rosa);border:2px solid #fff;display:flex;align-items:center;justify-content:font-size:.7rem;font-size:.7rem;font-weight:700;color:#fff;justify-content:center;margin-left:-8px}
+  .avatares span:first-child{margin-left:0;background:#F4C0D1;color:var(--rosa-escuro)}
+  .avatares span:nth-child(2){background:var(--coral-claro);color:var(--terracota)}
+  .avatares span:nth-child(3){background:var(--rosa);color:#fff}
+  .social-text{font-size:.85rem;color:var(--cinza-escuro);opacity:.7}
+  .social-text strong{color:var(--rosa);opacity:1;font-weight:600}
+
+  .hero-right{background:var(--rosa);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .hero-right::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:rgba(255,255,255,.08);border-radius:50%}
+  .hero-right::after{content:'';position:absolute;bottom:-100px;left:-80px;width:300px;height:300px;background:rgba(0,0,0,.06);border-radius:50%}
+  .hero-card{background:#fff;border-radius:24px;padding:2rem;width:340px;position:relative;z-index:2;box-shadow:0 40px 80px rgba(75,21,40,.25)}
+  .hero-card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+  .vera-avatar{width:48px;height:48px;border-radius:50%;background:var(--rosa-claro);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:1.2rem;color:var(--rosa)}
+  .vera-info h4{font-size:.95rem;font-weight:600;color:var(--cinza-escuro)}
+  .vera-info p{font-size:.8rem;color:var(--cinza-medio)}
+  .online-dot{display:inline-block;width:8px;height:8px;background:#4CAF50;border-radius:50%;margin-right:4px}
+  .chat-bubble{background:#F5F5F0;border-radius:16px 16px 16px 4px;padding:.85rem 1rem;font-size:.9rem;line-height:1.5;color:var(--cinza-escuro);margin-bottom:.75rem}
+  .chat-bubble.sent{background:var(--rosa);color:#fff;border-radius:16px 16px 4px 16px;text-align:right}
+  .chat-bubble em{font-style:italic;opacity:.9}
+  .card-cta{background:var(--rosa);color:#fff;border:none;width:100%;padding:.85rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;margin-top:1rem;transition:.2s}
+  .card-cta:hover{background:var(--rosa-escuro)}
+  .hero-float-tag{position:absolute;background:#fff;border-radius:12px;padding:.6rem 1rem;font-size:.8rem;font-weight:600;color:var(--rosa-escuro);z-index:3;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+  .tag1{top:80px;right:30px}
+  .tag2{bottom:90px;left:20px}
+  .tag-emoji{margin-right:.3rem}
+
+  /* TRUST BAR */
+  .trust-bar{background:var(--cinza-escuro);padding:1.25rem 4rem;display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap}
+  .trust-item{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:#fff;opacity:.8}
+  .trust-item span{opacity:.5;font-size:1.1rem}
+
+  /* COMO FUNCIONA */
+  .como-funciona{padding:7rem 4rem;background:#fff}
+  .section-label{font-size:.8rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--rosa);margin-bottom:.75rem}
+  .section-title{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--rosa-escuro);line-height:1.15;margin-bottom:1rem;max-width:520px}
+  .section-title em{color:var(--coral);font-style:italic}
+  .section-sub{font-size:1rem;line-height:1.7;color:var(--cinza-escuro);opacity:.7;max-width:480px;margin-bottom:4rem}
+  .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+  .step-card{background:var(--creme);border-radius:20px;padding:2rem 1.5rem;position:relative;overflow:hidden}
+  .step-card::before{content:attr(data-num);position:absolute;top:-10px;right:16px;font-family:'Playfair Display',serif;font-size:5rem;font-weight:900;color:var(--rosa);opacity:.12;line-height:1}
+  .step-icon{width:48px;height:48px;border-radius:14px;background:var(--rosa-claro);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;font-size:1.4rem}
+  .step-card h3{font-size:1rem;font-weight:600;color:var(--rosa-escuro);margin-bottom:.5rem}
+  .step-card p{font-size:.88rem;line-height:1.6;color:var(--cinza-escuro);opacity:.7}
+
+  /* PARA QUEM */
+  .para-quem{padding:7rem 4rem;background:var(--rosa-escuro);overflow:hidden;position:relative}
+  .para-quem::before{content:'';position:absolute;top:-150px;right:-150px;width:500px;height:500px;background:rgba(255,255,255,.04);border-radius:50%}
+  .para-quem .section-label{color:#F4C0D1}
+  .para-quem .section-title{color:#fff;max-width:600px}
+  .para-quem .section-sub{color:rgba(255,255,255,.65)}
+  .dores-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:0}
+  .dor-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:1.75rem 1.5rem;transition:.2s}
+  .dor-card:hover{background:rgba(255,255,255,.12)}
+  .dor-icon{font-size:1.75rem;margin-bottom:1rem}
+  .dor-card h3{font-size:1rem;font-weight:600;color:#fff;margin-bottom:.5rem}
+  .dor-card p{font-size:.88rem;line-height:1.6;color:rgba(255,255,255,.6)}
+  .dor-quote{grid-column:span 3;background:var(--rosa);border-radius:20px;padding:2rem 2.5rem;display:flex;align-items:center;gap:2rem}
+  .dor-quote blockquote{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;color:#fff;line-height:1.4;flex:1}
+  .dor-quote-author{font-size:.85rem;color:rgba(255,255,255,.7);font-style:normal;display:block;margin-top:.5rem;font-family:'DM Sans',sans-serif}
+
+  /* PLANOS */
+  .planos{padding:7rem 4rem;background:var(--creme)}
+  .planos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:0}
+  .plano-card{background:#fff;border-radius:24px;padding:2.5rem 2rem;border:1.5px solid #ede8e3;transition:.2s;position:relative}
+  .plano-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(75,21,40,.08)}
+  .plano-card.destaque{border-color:var(--rosa);background:var(--rosa)}
+  .plano-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--laranja);color:#fff;font-size:.75rem;font-weight:700;padding:.35rem 1rem;border-radius:100px;white-space:nowrap;letter-spacing:.5px}
+  .plano-nome{font-size:.85rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--cinza-medio);margin-bottom:.5rem}
+  .plano-card.destaque .plano-nome{color:rgba(255,255,255,.7)}
+  .plano-preco{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--rosa-escuro);line-height:1;margin-bottom:.25rem}
+  .plano-card.destaque .plano-preco{color:#fff}
+  .plano-periodo{font-size:.85rem;color:var(--cinza-medio);margin-bottom:1.5rem}
+  .plano-card.destaque .plano-periodo{color:rgba(255,255,255,.6)}
+  .plano-divisor{border:none;border-top:1px solid #f0ece8;margin-bottom:1.5rem}
+  .plano-card.destaque .plano-divisor{border-color:rgba(255,255,255,.2)}
+  .plano-features{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+  .plano-features li{font-size:.9rem;color:var(--cinza-escuro);display:flex;align-items:flex-start;gap:.5rem;opacity:.8}
+  .plano-features li::before{content:'✓';color:var(--rosa);font-weight:700;flex-shrink:0}
+  .plano-card.destaque .plano-features li{color:#fff;opacity:.9}
+  .plano-card.destaque .plano-features li::before{color:rgba(255,255,255,.8)}
+  .btn-plano{width:100%;padding:.9rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:.2s;border:1.5px solid var(--rosa);background:transparent;color:var(--rosa)}
+  .btn-plano:hover{background:var(--rosa);color:#fff}
+  .plano-card.destaque .btn-plano{background:#fff;color:var(--rosa);border-color:#fff}
+  .plano-card.destaque .btn-plano:hover{background:var(--rosa-claro)}
+
+  /* DEPOIMENTOS */
+  .depoimentos{padding:7rem 4rem;background:#fff}
+  .depo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+  .depo-card{background:var(--creme);border-radius:20px;padding:2rem;position:relative}
+  .depo-stars{color:var(--laranja);font-size:.9rem;margin-bottom:1rem;letter-spacing:2px}
+  .depo-texto{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;line-height:1.6;color:var(--cinza-escuro);margin-bottom:1.25rem}
+  .depo-autora{display:flex;align-items:center;gap:.75rem}
+  .depo-avatar{width:38px;height:38px;border-radius:50%;background:var(--rosa);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#fff}
+  .depo-avatar.c2{background:var(--coral)}
+  .depo-avatar.c3{background:#3C3489}
+  .depo-nome{font-size:.9rem;font-weight:600;color:var(--rosa-escuro)}
+  .depo-cargo{font-size:.8rem;color:var(--cinza-medio)}
+  .depo-grande{grid-column:span 2;background:var(--rosa-escuro)}
+  .depo-grande .depo-texto{color:rgba(255,255,255,.9)}
+  .depo-grande .depo-nome{color:#F4C0D1}
+  .depo-grande .depo-cargo{color:rgba(255,255,255,.5)}
+
+  /* CTA FINAL */
+  .cta-final{background:var(--coral);padding:7rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;overflow:hidden}
+  .cta-final::before{content:'✦';position:absolute;font-family:'Playfair Display',serif;font-size:20rem;color:rgba(255,255,255,.06);right:-2rem;bottom:-4rem;line-height:1}
+  .cta-final .section-label{color:rgba(255,255,255,.7)}
+  .cta-final-title{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:#fff;line-height:1.1;margin-bottom:1.25rem}
+  .cta-final-title em{color:#FAEEDA;font-style:italic}
+  .cta-final p{font-size:1rem;line-height:1.7;color:rgba(255,255,255,.75);margin-bottom:2rem}
+  .cta-final-actions{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+  .btn-cta-branco{background:#fff;color:var(--terracota);border:none;padding:.9rem 2rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s}
+  .btn-cta-branco:hover{background:#FAEEDA}
+  .btn-cta-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5);padding:.9rem 2rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;transition:.2s}
+  .btn-cta-outline:hover{border-color:#fff}
+  .cta-stats{display:flex;flex-direction:column;gap:1.5rem}
+  .cta-stat{display:flex;align-items:flex-start;gap:1rem}
+  .cta-stat-num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;color:#fff;line-height:1}
+  .cta-stat-label{font-size:.9rem;color:rgba(255,255,255,.7);margin-top:.2rem}
+
+  /* FOOTER */
+  footer{background:var(--cinza-escuro);padding:3rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
+  .footer-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#fff}
+  .footer-logo span{color:var(--rosa)}
+  .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+  .footer-links a{text-decoration:none;font-size:.85rem;color:rgba(255,255,255,.5);transition:.2s}
+  .footer-links a:hover{color:#fff}
+  .footer-copy{font-size:.8rem;color:rgba(255,255,255,.35)}
+</style>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Vera<span>.</span>MEI</div>
+  <ul class="nav-links">
+    <li><a href="#">Como funciona</a></li>
+    <li><a href="#">Para quem é</a></li>
+    <li><a href="#">Planos</a></li>
+    <li><a href="#">Depoimentos</a></li>
+  </ul>
+  <button class="nav-cta">Comece grátis →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">Contabilidade amiga da empreendedora</div>
+    <h1 class="hero-title">Sua conta<br/>tabilidade<br/>finalmente <em>te entende</em></h1>
+    <p class="hero-subtitle">A Vera MEI conecta você ao ecossistema contábil e financeiro que fala a sua língua — com empatia, sem julgamento, sem enrolação.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Quero minha Vera →</button>
+      <button class="btn-secondary">Ver como funciona</button>
+    </div>
+    <div class="hero-social-proof">
+      <div class="avatares">
+        <span>A</span><span>M</span><span>R</span>
+      </div>
+      <p class="social-text"><strong>+3.200 empreendedoras</strong> já organizaram as contas</p>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-float-tag tag1">✦ Sem julgamento</div>
+    <div class="hero-float-tag tag2">💜 Fala a sua língua</div>
+    <div class="hero-card">
+      <div class="hero-card-header">
+        <div class="vera-avatar">V</div>
+        <div class="vera-info">
+          <h4>Vera MEI</h4>
+          <p><span class="online-dot"></span>Online agora</p>
+        </div>
+      </div>
+      <div class="chat-bubble">"Oi! Vi que você tem uma dívida com a Receita. Isso tem solução — e a gente resolve junto. 💕"</div>
+      <div class="chat-bubble sent">"Eu tenho medo de perder meu CNPJ..."</div>
+      <div class="chat-bubble">"Entendo completamente. Mas enquanto houver <em>1% de chance, há solução</em>. Vamos ver suas opções?"</div>
+      <button class="card-cta">Falar com a Vera</button>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><span>✓</span> Sem burocracia</div>
+  <div class="trust-item"><span>✓</span> Assessoria completa</div>
+  <div class="trust-item"><span>✓</span> Contabilidade digital</div>
+  <div class="trust-item"><span>✓</span> Suporte humanizado</div>
+  <div class="trust-item"><span>✓</span> Para MEIs de todo o Brasil</div>
+</div>
+
+<!-- COMO FUNCIONA -->
+<section class="como-funciona">
+  <p class="section-label">Jornada simples</p>
+  <h2 class="section-title">De perdida a <em>dona</em> do negócio</h2>
+  <p class="section-sub">Em 4 passos, você sai do caos financeiro e assume o controle da sua empresa.</p>
+  <div class="steps-grid">
+    <div class="step-card" data-num="1">
+      <div class="step-icon">🎯</div>
+      <h3>Diagnóstico</h3>
+      <p>A Vera entende sua situação atual sem julgamento — dívidas, pendências e tudo mais.</p>
+    </div>
+    <div class="step-card" data-num="2">
+      <div class="step-icon">📋</div>
+      <h3>Escolha seu plano</h3>
+      <p>Planos feitos para a realidade de quem está começando ou crescendo.</p>
+    </div>
+    <div class="step-card" data-num="3">
+      <div class="step-icon">💳</div>
+      <h3>Pagamento fácil</h3>
+      <p>Sem surpresas. Valor justo, parcelamento disponível e nota fiscal garantida.</p>
+    </div>
+    <div class="step-card" data-num="4">
+      <div class="step-icon">🚀</div>
+      <h3>Assessoria ativa</h3>
+      <p>Sua contabilidade funciona, suas obrigações em dia, seu CNPJ protegido.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PARA QUEM -->
+<section class="para-quem">
+  <p class="section-label">Para quem é a Vera</p>
+  <h2 class="section-title" style="color:#fff">Você se reconhece <em style="color:#F4C0D1">aqui?</em></h2>
+  <p class="section-sub">A Vera foi criada para quem está cansada de sentir vergonha da própria situação financeira.</p>
+  <div class="dores-grid">
+    <div class="dor-card">
+      <div class="dor-icon">😰</div>
+      <h3>Perdida na contabilidade</h3>
+      <p>DAS, IRPF, CNPJ, DEFIS... tudo parece um idioma diferente. A Vera traduz tudo.</p>
+    </div>
+    <div class="dor-card">
+      <div class="dor-icon">🙈</div>
+      <h3>Medo das consequências</h3>
+      <p>Multa, bloqueio, perda do CNPJ. O medo paralisa, mas ignorar só piora.</p>
+    </div>
+    <div class="dor-card">
+      <div class="dor-icon">💸</div>
+      <h3>Dívida sem conversa</h3>
+      <p>Empreendedora sem dívida é empreendedora sem história. A Vera escuta sem filtro.</p>
+    </div>
+    <div class="dor-quote">
+      <blockquote>"Ou você domina o monstro, ou é dominado por ele."<cite class="dor-quote-author">— Filosofia da Vera MEI</cite></blockquote>
+      <button class="btn-cta-branco" style="color:var(--terracota);white-space:nowrap">Quero dominar →</button>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="planos">
+  <p class="section-label">Planos</p>
+  <h2 class="section-title">Escolha o seu <em>ritmo</em></h2>
+  <p class="section-sub">Sem letra miúda. Sem surpresa no boleto.</p>
+  <div class="planos-grid">
+    <div class="plano-card">
+      <p class="plano-nome">Básico</p>
+      <p class="plano-preco">R$49</p>
+      <p class="plano-periodo">/mês · cancele quando quiser</p>
+      <hr class="plano-divisor"/>
+      <ul class="plano-features">
+        <li>Abertura e manutenção de MEI</li>
+        <li>Emissão de DAS mensais</li>
+        <li>Declaração anual (DASN)</li>
+        <li>Chat de dúvidas</li>
+      </ul>
+      <button class="btn-plano">Começar agora</button>
+    </div>
+    <div class="plano-card destaque">
+      <div class="plano-badge">⭐ Mais escolhido</div>
+      <p class="plano-nome">Assessoria</p>
+      <p class="plano-preco">R$99</p>
+      <p class="plano-periodo">/mês · suporte prioritário</p>
+      <hr class="plano-divisor"/>
+      <ul class="plano-features">
+        <li>Tudo do plano Básico</li>
+        <li>Regularização de dívidas</li>
+        <li>Planejamento financeiro</li>
+        <li>Suporte via WhatsApp</li>
+        <li>Relatórios mensais</li>
+      </ul>
+      <button class="btn-plano">Quero esse plano</button>
+    </div>
+    <div class="plano-card">
+      <p class="plano-nome">Crescimento</p>
+      <p class="plano-preco">R$199</p>
+      <p class="plano-periodo">/mês · para quem está escalando</p>
+      <hr class="plano-divisor"/>
+      <ul class="plano-features">
+        <li>Tudo do plano Assessoria</li>
+        <li>Migração para ME/EPP</li>
+        <li>Consultoria de expansão</li>
+        <li>Gestor dedicado</li>
+        <li>Acesso antecipado a recursos</li>
+      </ul>
+      <button class="btn-plano">Quero crescer</button>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="depoimentos">
+  <p class="section-label">Histórias reais</p>
+  <h2 class="section-title">Empreendedoras que <em>dominaram</em></h2>
+  <p class="section-sub" style="margin-bottom:3rem">Nada de texto inventado. Experiências de quem passou pelo mesmo que você.</p>
+  <div class="depo-grid">
+    <div class="depo-card depo-grande">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-texto">"Eu devia 3 anos de DAS e achei que ia perder meu CNPJ. A Vera me disse que ainda tinha solução e me guiou em cada passo. Hoje estou em dia e cresci 40% esse ano."</p>
+      <div class="depo-autora">
+        <div class="depo-avatar" style="background:rgba(255,255,255,.15);color:#F4C0D1">SC</div>
+        <div>
+          <p class="depo-nome">Simone Cardoso</p>
+          <p class="depo-cargo">Doces artesanais · SP</p>
+        </div>
+      </div>
+    </div>
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-texto">"Finalmente entendo o que é DAS, CNAE e tudo mais. A Vera explica sem me tratar como burra."</p>
+      <div class="depo-autora">
+        <div class="depo-avatar c2">MP</div>
+        <div>
+          <p class="depo-nome">Maria Paula</p>
+          <p class="depo-cargo">Costureira · MG</p>
+        </div>
+      </div>
+    </div>
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-texto">"Chorei na primeira conversa. Finalmente alguém entendeu minha situação sem me julgar."</p>
+      <div class="depo-autora">
+        <div class="depo-avatar c3">RL</div>
+        <div>
+          <p class="depo-nome">Renata Lima</p>
+          <p class="depo-cargo">Estética · RJ</p>
+        </div>
+      </div>
+    </div>
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-texto">"Suporte via WhatsApp que responde de verdade. Parece que tem uma contadora amiga do meu lado."</p>
+      <div class="depo-autora">
+        <div class="depo-avatar">FS</div>
+        <div>
+          <p class="depo-nome">Fernanda Silva</p>
+          <p class="depo-cargo">Pet shop · RS</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div>
+    <p class="section-label">Comece hoje</p>
+    <h2 class="cta-final-title">Enquanto houver <em>1%</em> de chance, há solução.</h2>
+    <p>Não espere a dívida crescer. Não espere o medo paralisar. A Vera está aqui, sem julgamento, pronta para caminhar com você.</p>
+    <div class="cta-final-actions">
+      <button class="btn-cta-branco">Falar com a Vera agora →</button>
+      <button class="btn-cta-outline">Ver planos</button>
+    </div>
+  </div>
+  <div class="cta-stats">
+    <div class="cta-stat">
+      <div>
+        <p class="cta-stat-num">3.200+</p>
+        <p class="cta-stat-label">empreendedoras atendidas</p>
+      </div>
+    </div>
+    <div class="cta-stat">
+      <div>
+        <p class="cta-stat-num">92%</p>
+        <p class="cta-stat-label">regularizaram a situação fiscal</p>
+      </div>
+    </div>
+    <div class="cta-stat">
+      <div>
+        <p class="cta-stat-num">4.9★</p>
+        <p class="cta-stat-label">avaliação média das usuárias</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Vera<span>.</span>MEI</div>
+  <div class="footer-links">
+    <a href="#">Como funciona</a>
+    <a href="#">Planos</a>
+    <a href="#">Blog</a>
+    <a href="#">Política de privacidade</a>
+    <a href="#">Termos de uso</a>
+  </div>
+  <p class="footer-copy">© 2025 Vera MEI · CNPJ 00.000.000/0001-00</p>
+</footer>
