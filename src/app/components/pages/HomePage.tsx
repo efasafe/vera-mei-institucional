@@ -632,7 +632,7 @@ export function HomePage() {
 
       {/* ── TESTIMONIALS ── */}
       <section
-        className="py-24 overflow-hidden hidden"
+        className="py-24 overflow-hidden"
         style={{ background: "var(--vera-mei-dark)" }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -776,81 +776,13 @@ export function HomePage() {
             </motion.div>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid md:grid-cols-3 gap-7"
-          >
-            {blogPosts.map((post, i) => (
-              <motion.article
-                key={i}
-                variants={fadeUp}
-                className="rounded-2xl overflow-hidden group cursor-pointer hover:scale-[1.02] transition-all duration-300"
-                style={{
-                  background: "white",
-                  border: "1px solid var(--vera-mei-border)",
-                  boxShadow: "0 2px 20px rgba(107,48,80,0.06)",
-                }}
-              >
-                <div className="aspect-[16/9] overflow-hidden">
-                  <img
-                    src={post.img}
-                    alt={post.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span
-                      className="text-xs px-2.5 py-1 rounded-full"
-                      style={{
-                        background: "var(--vera-mei-blush)",
-                        color: "var(--vera-mei-wine)",
-                        fontWeight: 500,
-                      }}
-                    >
-                      {post.category}
-                    </span>
-                    <span className="text-xs" style={{ color: "var(--vera-mei-muted)" }}>
-                      {post.date}
-                    </span>
-                  </div>
-                  <h3
-                    className="mb-2 leading-snug"
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      color: "var(--vera-mei-dark)",
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {post.title}
-                  </h3>
-                  <p
-                    className="text-sm leading-relaxed mb-4"
-                    style={{ color: "var(--vera-mei-muted)" }}
-                  >
-                    {post.excerpt}
-                  </p>
-                  <Link
-                    to="/blog"
-                    className="inline-flex items-center gap-1 text-sm"
-                    style={{ color: "var(--vera-mei-wine)", fontWeight: 500 }}
-                  >
-                    Ler mais <ChevronRight size={14} />
-                  </Link>
-                </div>
-              </motion.article>
-            ))}
-          </motion.div>
+          {/* Posts preview removido - visite /blog para ver os posts */}
         </div>
       </section>
 
       {/* ── FINAL CTA ── */}
       <section
-        className="py-24 relative overflow-hidden hidden"
+        className="py-24 relative overflow-hidden"
         style={{
           background:
             "linear-gradient(135deg, var(--vera-mei-wine) 0%, #441328 100%)",

@@ -1,0 +1,112 @@
+/* Custom styles for React Quill editor */
+
+.ql-toolbar {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb !important;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.ql-container {
+  font-family: inherit;
+  font-size: 0.875rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.ql-editor {
+  min-height: 200px;
+  padding: 1rem;
+}
+
+.ql-editor.ql-blank::before {
+  color: #9ca3af;
+  font-style: normal;
+}
+
+/* Tamanhos de fonte personalizados */
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="small"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="small"]::before {
+  content: 'Pequeno';
+  font-size: 0.75rem !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before {
+  content: 'Normal';
+  font-size: 0.875rem !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="large"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="large"]::before {
+  content: 'Grande';
+  font-size: 1.125rem !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="huge"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="huge"]::before {
+  content: 'Enorme';
+  font-size: 1.5rem !important;
+}
+
+/* Aplicar os tamanhos no conteúdo */
+.ql-editor .ql-size-small {
+  font-size: 0.75rem;
+}
+
+.ql-editor .ql-size-large {
+  font-size: 1.125rem;
+}
+
+.ql-editor .ql-size-huge {
+  font-size: 1.5rem;
+}
+
+/* Estilo dos botões da toolbar */
+.ql-snow .ql-stroke {
+  stroke: #4b5563;
+}
+
+.ql-snow .ql-fill {
+  fill: #4b5563;
+}
+
+.ql-snow .ql-picker-label {
+  color: #4b5563;
+}
+
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover,
+.ql-snow.ql-toolbar button:focus,
+.ql-snow .ql-toolbar button:focus {
+  color: #f97316;
+}
+
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button:focus .ql-stroke,
+.ql-snow .ql-toolbar button:focus .ql-stroke {
+  stroke: #f97316;
+}
+
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow .ql-toolbar button:hover .ql-fill,
+.ql-snow.ql-toolbar button:focus .ql-fill,
+.ql-snow .ql-toolbar button:focus .ql-fill {
+  fill: #f97316;
+}
+
+.ql-snow.ql-toolbar button.ql-active,
+.ql-snow .ql-toolbar button.ql-active {
+  color: #f97316;
+}
+
+.ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ql-snow .ql-toolbar button.ql-active .ql-stroke {
+  stroke: #f97316;
+}
+
+.ql-snow.ql-toolbar button.ql-active .ql-fill,
+.ql-snow .ql-toolbar button.ql-active .ql-fill {
+  fill: #f97316;
+}

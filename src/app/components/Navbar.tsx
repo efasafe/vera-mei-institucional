@@ -7,10 +7,10 @@ import logoImg from "../../imports/image.png";
 const navLinks = [
   { label: "Início", href: "/" },
   { label: "Sobre", href: "/sobre" },
-  // { label: "Serviços", href: "/servicos" },
-  // { label: "Blog", href: "/blog" },
-  // { label: "FAQ", href: "/faq" },
-  // { label: "Contato", href: "/contato" },
+  { label: "Serviços", href: "/servicos" },
+  { label: "Blog", href: "/blog" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contato", href: "/contato" },
 ];
 
 export function Navbar() {

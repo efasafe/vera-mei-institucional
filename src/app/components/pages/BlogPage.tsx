@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { ArrowRight, Clock, ChevronRight, Search } from "lucide-react";
+import { FirebasePosts } from '../../utils/firebasePosts';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -12,102 +13,129 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
-const categories = ["Todos", "Liderança", "Branding", "Finanças", "Marketing", "Networking", "Mindset", "Negócios"];
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  images?: string[];
+  createdAt: string;
+  updatedAt: string;
+  authorId: string;
+}
 
-const posts = [
+const placeholderPosts: Post[] = [
   {
-    id: 1,
-    title: "Como construir uma marca pessoal poderosa como empreendedora",
-    category: "Branding",
-    date: "12 Mai 2026",
-    readTime: "7 min",
-    excerpt: "Sua marca pessoal é seu ativo mais valioso no mundo dos negócios. Descubra como posicioná-la estrategicamente para atrair clientes, parceiros e oportunidades.",
-    img: "https://images.unsplash.com/photo-1558478551-1a378f63328e?w=800&h=500&fit=crop",
-    featured: true,
-    author: "Ana Paula Rocha",
+    id: 'placeholder-1',
+    title: 'Como construir uma marca pessoal poderosa como empreendedora',
+    content: 'Sua marca pessoal é seu ativo mais valioso no mundo dos negócios. Descubra como posicioná-la estrategicamente para atrair clientes, parceiros e oportunidades. Neste artigo, você vai aprender as principais estratégias para construir uma presença marcante.',
+    images: ['https://images.unsplash.com/photo-1558478551-1a378f63328e?w=800&h=500&fit=crop'],
+    createdAt: '2026-05-12T10:00:00Z',
+    updatedAt: '2026-05-12T10:00:00Z',
+    authorId: 'placeholder',
   },
   {
-    id: 2,
-    title: "5 estratégias de networking que realmente funcionam para mulheres",
-    category: "Networking",
-    date: "5 Mai 2026",
-    readTime: "5 min",
-    excerpt: "Conectar-se vai muito além de trocar cartões. Aprenda como criar relacionamentos estratégicos que impulsionam seu negócio a longo prazo.",
-    img: "https://images.unsplash.com/photo-1590650046871-92c887180603?w=800&h=500&fit=crop",
-    featured: false,
-    author: "Carla Mendes",
+    id: 'placeholder-2',
+    title: '5 estratégias de networking que realmente funcionam para mulheres',
+    content: 'Conectar-se vai muito além de trocar cartões. Aprenda como criar relacionamentos estratégicos que impulsionam seu negócio a longo prazo. Descubra técnicas comprovadas para expandir sua rede de contatos.',
+    images: ['https://images.unsplash.com/photo-1590650046871-92c887180603?w=800&h=500&fit=crop'],
+    createdAt: '2026-05-05T10:00:00Z',
+    updatedAt: '2026-05-05T10:00:00Z',
+    authorId: 'placeholder',
   },
   {
-    id: 3,
-    title: "Liderança feminina: como navegar ambientes desafiadores com confiança",
-    category: "Liderança",
-    date: "28 Abr 2026",
-    readTime: "8 min",
-    excerpt: "Desenvolva sua presença executiva e aprenda a liderar com autenticidade em qualquer contexto, sem abrir mão de quem você é.",
-    img: "https://images.unsplash.com/photo-1573165662973-4ab3cf3d3508?w=800&h=500&fit=crop",
-    featured: false,
-    author: "Mariana Ferreira",
+    id: 'placeholder-3',
+    title: 'Liderança feminina: como navegar ambientes desafiadores com confiança',
+    content: 'Desenvolva sua presença executiva e aprenda a liderar com autenticidade em qualquer contexto, sem abrir mão de quem você é. Este guia completo vai te ajudar a se posicionar como líder.',
+    images: ['https://images.unsplash.com/photo-1573165662973-4ab3cf3d3508?w=800&h=500&fit=crop'],
+    createdAt: '2026-04-28T10:00:00Z',
+    updatedAt: '2026-04-28T10:00:00Z',
+    authorId: 'placeholder',
   },
   {
-    id: 4,
-    title: "Gestão financeira para empreendedoras: guia completo para iniciantes",
-    category: "Finanças",
-    date: "20 Abr 2026",
-    readTime: "10 min",
-    excerpt: "Entender as finanças do seu negócio é fundamental. Aprenda os conceitos essenciais e as ferramentas que toda empreendedora precisa dominar.",
-    img: "https://images.unsplash.com/photo-1655988940601-7702d8685f95?w=800&h=500&fit=crop",
-    featured: false,
-    author: "Juliana Costa",
+    id: 'placeholder-4',
+    title: 'Gestão financeira para empreendedoras: guia completo para iniciantes',
+    content: 'Entender as finanças do seu negócio é fundamental. Aprenda os conceitos essenciais e as ferramentas que toda empreendedora precisa dominar para ter sucesso financeiro.',
+    images: ['https://images.unsplash.com/photo-1655988940601-7702d8685f95?w=800&h=500&fit=crop'],
+    createdAt: '2026-04-20T10:00:00Z',
+    updatedAt: '2026-04-20T10:00:00Z',
+    authorId: 'placeholder',
   },
   {
-    id: 5,
-    title: "Marketing digital para pequenos negócios: por onde começar",
-    category: "Marketing",
-    date: "14 Abr 2026",
-    readTime: "6 min",
-    excerpt: "Presença digital não é opcional — é necessidade. Descubra como criar uma estratégia de marketing digital eficiente mesmo com orçamento limitado.",
-    img: "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&h=500&fit=crop",
-    featured: false,
-    author: "Raquel Lima",
+    id: 'placeholder-5',
+    title: 'Marketing digital para pequenos negócios: por onde começar',
+    content: 'Presença digital não é opcional — é necessidade. Descubra como criar uma estratégia de marketing digital eficiente mesmo com orçamento limitado.',
+    images: ['https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&h=500&fit=crop'],
+    createdAt: '2026-04-14T10:00:00Z',
+    updatedAt: '2026-04-14T10:00:00Z',
+    authorId: 'placeholder',
   },
   {
-    id: 6,
-    title: "Mindset empreendedor: como superar o síndrome do impostor",
-    category: "Mindset",
-    date: "7 Abr 2026",
-    readTime: "5 min",
-    excerpt: "O síndrome do impostor afeta até 70% das mulheres em posições de liderança. Saiba como identificar e superar esse obstáculo invisível.",
-    img: "https://images.unsplash.com/photo-1573496130141-209d200cebd8?w=800&h=500&fit=crop",
-    featured: false,
-    author: "Sofia Andrade",
-  },
-  {
-    id: 7,
-    title: "Como escalar seu negócio sem perder a essência",
-    category: "Negócios",
-    date: "1 Abr 2026",
-    readTime: "7 min",
-    excerpt: "Crescer é o sonho de toda empreendedora. Mas como manter a cultura e a qualidade enquanto escala? Confira estratégias comprovadas.",
-    img: "https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=800&h=500&fit=crop",
-    featured: false,
-    author: "Beatriz Nunes",
+    id: 'placeholder-6',
+    title: 'Mindset empreendedor: como superar o síndrome do impostor',
+    content: 'O síndrome do impostor afeta até 70% das mulheres em posições de liderança. Saiba como identificar e superar esse obstáculo invisível que pode estar limitando seu crescimento.',
+    images: ['https://images.unsplash.com/photo-1573496130141-209d200cebd8?w=800&h=500&fit=crop'],
+    createdAt: '2026-04-07T10:00:00Z',
+    updatedAt: '2026-04-07T10:00:00Z',
+    authorId: 'placeholder',
   },
 ];
 
+// Helper para extrair texto puro do HTML
+const stripHtml = (html: string): string => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
+
 export function BlogPage() {
-  const [activeCategory, setActiveCategory] = useState("Todos");
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const featuredPost = posts.find((p) => p.featured);
-  const filteredPosts = posts
-    .filter((p) => !p.featured)
-    .filter(
-      (p) =>
-        (activeCategory === "Todos" || p.category === activeCategory) &&
-        (searchQuery === "" ||
-          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  const loadPosts = async () => {
+    try {
+      console.log('[BlogPage] Fetching posts from Firebase...');
+
+      const firebasePosts = await FirebasePosts.getAll();
+
+      if (firebasePosts.length > 0) {
+        setPosts(firebasePosts);
+        console.log('[BlogPage] Using posts from Firebase:', firebasePosts.length);
+      } else {
+        setPosts(placeholderPosts);
+        console.log('[BlogPage] No posts found, using placeholders');
+      }
+    } catch (err) {
+      console.error('[BlogPage] Error loading posts:', err);
+      setPosts(placeholderPosts);
+      console.log('[BlogPage] Exception loading posts, using placeholders');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredPosts = posts.filter((post) =>
+    searchQuery === "" ||
+    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    stripHtml(post.content).toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const estimateReadTime = (content: string) => {
+    const wordsPerMinute = 200;
+    const plainText = stripHtml(content);
+    const words = plainText.split(/\s+/).length;
+    const minutes = Math.ceil(words / wordsPerMinute);
+    return `${minutes} min`;
+  };
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
@@ -162,7 +190,7 @@ export function BlogPage() {
       </section>
 
       {/* ── FEATURED POST ── */}
-      {featuredPost && (
+      {!loading && filteredPosts.length > 0 && (
         <section className="py-16" style={{ background: "var(--vera-mei-cream)" }}>
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <motion.div
@@ -177,13 +205,19 @@ export function BlogPage() {
                 boxShadow: "0 8px 40px rgba(107,48,80,0.1)",
               }}
             >
-              <div className="aspect-[4/3] lg:aspect-auto overflow-hidden">
-                <img
-                  src={featuredPost.img}
-                  alt={featuredPost.title}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
-              </div>
+              {filteredPosts[0].images && filteredPosts[0].images.length > 0 ? (
+                <div className="aspect-[4/3] lg:aspect-auto overflow-hidden">
+                  <img
+                    src={filteredPosts[0].images[0]}
+                    alt={filteredPosts[0].title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-[4/3] lg:aspect-auto overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                  <span className="text-4xl" style={{ color: "var(--vera-mei-wine)" }}>📝</span>
+                </div>
+              )}
               <div className="p-8 lg:p-10 flex flex-col justify-center">
                 <div className="flex items-center gap-3 mb-4">
                   <span
@@ -194,14 +228,13 @@ export function BlogPage() {
                       fontWeight: 600,
                     }}
                   >
-                    Destaque
+                    Mais Recente
                   </span>
-                  <span
-                    className="text-xs px-2.5 py-1 rounded-full"
-                    style={{ background: "var(--vera-mei-light)", color: "var(--vera-mei-wine)", fontWeight: 500 }}
-                  >
-                    {featuredPost.category}
-                  </span>
+                  {filteredPosts[0].id.startsWith('placeholder-') && (
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
+                      Exemplo
+                    </span>
+                  )}
                 </div>
                 <h2
                   className="mb-4 leading-tight"
@@ -212,40 +245,22 @@ export function BlogPage() {
                     fontWeight: 600,
                   }}
                 >
-                  {featuredPost.title}
+                  {filteredPosts[0].title}
                 </h2>
                 <p
                   className="text-sm leading-relaxed mb-6"
                   style={{ color: "var(--vera-mei-muted)", lineHeight: 1.8 }}
                 >
-                  {featuredPost.excerpt}
+                  {stripHtml(filteredPosts[0].content).substring(0, 200)}
+                  {stripHtml(filteredPosts[0].content).length > 200 ? '...' : ''}
                 </p>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
-                      style={{ background: "var(--vera-mei-blush)", color: "var(--vera-mei-wine)", fontWeight: 700 }}
-                    >
-                      {featuredPost.author.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="text-xs" style={{ color: "var(--vera-mei-dark)", fontWeight: 500 }}>
-                        {featuredPost.author}
-                      </div>
-                      <div className="flex items-center gap-2 text-xs" style={{ color: "var(--vera-mei-muted)" }}>
-                        <span>{featuredPost.date}</span>
-                        <span>·</span>
-                        <Clock size={11} />
-                        <span>{featuredPost.readTime}</span>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2 text-xs" style={{ color: "var(--vera-mei-muted)" }}>
+                    <Clock size={11} />
+                    <span>{estimateReadTime(filteredPosts[0].content)}</span>
+                    <span>·</span>
+                    <span>{formatDate(filteredPosts[0].createdAt)}</span>
                   </div>
-                  <button
-                    className="inline-flex items-center gap-1.5 text-sm transition-all hover:gap-2.5"
-                    style={{ color: "var(--vera-mei-wine)", fontWeight: 600 }}
-                  >
-                    Ler artigo <ArrowRight size={15} />
-                  </button>
                 </div>
               </div>
             </motion.div>
@@ -256,9 +271,8 @@ export function BlogPage() {
       {/* ── POSTS GRID ── */}
       <section className="py-16" style={{ background: "var(--vera-mei-light)" }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Filters */}
+          {/* Search */}
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
-            {/* Search */}
             <div className="relative flex-1 max-w-xs">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--vera-mei-muted)" }} />
               <input
@@ -276,129 +290,97 @@ export function BlogPage() {
                 }}
               />
             </div>
-            {/* Category filter */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className="px-4 py-2 rounded-full text-xs transition-all hover:scale-105"
-                  style={{
-                    background: activeCategory === cat ? "var(--vera-mei-sage)" : "white",
-                    color: activeCategory === cat ? "var(--vera-mei-cream)" : "var(--vera-mei-muted)",
-                    border: activeCategory === cat ? "none" : "1px solid var(--vera-mei-border)",
-                    fontWeight: 500,
-                  }}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Grid */}
-          <motion.div
-            layout
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-7"
-          >
-            {filteredPosts.length === 0 ? (
-              <div className="col-span-3 py-16 text-center">
-                <p style={{ color: "var(--vera-mei-muted)" }}>Nenhum artigo encontrado.</p>
-              </div>
-            ) : (
-              filteredPosts.map((post) => (
-                <motion.article
-                  key={post.id}
-                  layout
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUp}
-                  className="rounded-2xl overflow-hidden group cursor-pointer hover:scale-[1.01] transition-all duration-300"
-                  style={{
-                    background: "white",
-                    border: "1px solid var(--vera-mei-border)",
-                    boxShadow: "0 2px 20px rgba(107,48,80,0.06)",
-                  }}
-                >
-                  <div className="aspect-[16/9] overflow-hidden">
-                    <img
-                      src={post.img}
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span
-                        className="text-xs px-2.5 py-1 rounded-full"
+          {loading ? (
+            <div className="col-span-3 py-16 text-center">
+              <p style={{ color: "var(--vera-mei-muted)" }}>Carregando posts...</p>
+            </div>
+          ) : (
+            <motion.div
+              layout
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-7"
+            >
+              {filteredPosts.length === 0 ? (
+                <div className="col-span-3 py-16 text-center">
+                  <p style={{ color: "var(--vera-mei-muted)" }}>
+                    {posts.length === 0 ? 'Nenhum post publicado ainda.' : 'Nenhum artigo encontrado.'}
+                  </p>
+                </div>
+              ) : (
+                filteredPosts.slice(1).map((post) => (
+                  <motion.article
+                    key={post.id}
+                    layout
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={fadeUp}
+                    className="rounded-2xl overflow-hidden group cursor-pointer hover:scale-[1.01] transition-all duration-300 relative"
+                    style={{
+                      background: "white",
+                      border: "1px solid var(--vera-mei-border)",
+                      boxShadow: "0 2px 20px rgba(107,48,80,0.06)",
+                    }}
+                  >
+                    {post.id.startsWith('placeholder-') && (
+                      <div className="absolute top-2 right-2 z-10">
+                        <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
+                          Exemplo
+                        </span>
+                      </div>
+                    )}
+                    {post.images && post.images.length > 0 ? (
+                      <div className="aspect-[16/9] overflow-hidden">
+                        <img
+                          src={post.images[0]}
+                          alt={post.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-[16/9] overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                        <span className="text-3xl">📝</span>
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <h3
+                        className="mb-2 leading-snug"
                         style={{
-                          background: "var(--vera-mei-blush)",
-                          color: "var(--vera-mei-wine)",
-                          fontWeight: 500,
+                          fontFamily: "'Playfair Display', serif",
+                          color: "var(--vera-mei-dark)",
+                          fontSize: "1rem",
+                          fontWeight: 600,
                         }}
                       >
-                        {post.category}
-                      </span>
-                    </div>
-                    <h3
-                      className="mb-2 leading-snug"
-                      style={{
-                        fontFamily: "'Playfair Display', serif",
-                        color: "var(--vera-mei-dark)",
-                        fontSize: "1rem",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {post.title}
-                    </h3>
-                    <p
-                      className="text-sm leading-relaxed mb-5"
-                      style={{ color: "var(--vera-mei-muted)", lineHeight: 1.7 }}
-                    >
-                      {post.excerpt.length > 100
-                        ? post.excerpt.slice(0, 100) + "..."
-                        : post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--vera-mei-muted)" }}>
-                        <Clock size={11} />
-                        <span>{post.readTime}</span>
-                        <span>·</span>
-                        <span>{post.date}</span>
-                      </div>
-                      <button
-                        className="inline-flex items-center gap-1 text-xs transition-all group-hover:gap-2"
-                        style={{ color: "var(--vera-mei-wine)", fontWeight: 600 }}
+                        {post.title}
+                      </h3>
+                      <p
+                        className="text-sm leading-relaxed mb-5"
+                        style={{ color: "var(--vera-mei-muted)", lineHeight: 1.7 }}
                       >
-                        Ler <ChevronRight size={13} />
-                      </button>
+                        {stripHtml(post.content).substring(0, 100)}
+                        {stripHtml(post.content).length > 100 ? '...' : ''}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--vera-mei-muted)" }}>
+                          <Clock size={11} />
+                          <span>{estimateReadTime(post.content)}</span>
+                          <span>·</span>
+                          <span>{formatDate(post.createdAt)}</span>
+                        </div>
+                        <button
+                          className="inline-flex items-center gap-1 text-xs transition-all group-hover:gap-2"
+                          style={{ color: "var(--vera-mei-wine)", fontWeight: 600 }}
+                        >
+                          Ler <ChevronRight size={13} />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </motion.article>
-              ))
-            )}
-          </motion.div>
-
-          {/* Load More */}
-          {filteredPosts.length > 0 && (
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="text-center mt-12"
-            >
-              <button
-                className="px-8 py-3.5 rounded-full text-sm transition-all hover:scale-105"
-                style={{
-                  border: "1.5px solid var(--vera-mei-wine)",
-                  color: "var(--vera-mei-wine)",
-                  fontWeight: 500,
-                }}
-              >
-                Carregar mais artigos
-              </button>
+                  </motion.article>
+                ))
+              )}
             </motion.div>
           )}
         </div>
