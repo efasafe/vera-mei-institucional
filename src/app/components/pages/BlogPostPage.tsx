@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { Clock, ArrowLeft } from "lucide-react";
+import { Clock, ArrowLeft, ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
 import { FirebasePosts, Post } from "../../utils/firebasePosts";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
 const staggerContainer = {
@@ -115,10 +115,26 @@ export function BlogPostPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
+  const [fullscreenIndex, setFullscreenIndex] = useState(0);
 
   useEffect(() => {
     if (id) loadPost(id);
   }, [id]);
+
+  useEffect(() => {
+    if (!fullscreenOpen || !post?.images) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFullscreenOpen(false);
+      if (e.key === "ArrowLeft")
+        setFullscreenIndex((prev) => (prev - 1 + post.images!.length) % post.images!.length);
+      if (e.key === "ArrowRight")
+        setFullscreenIndex((prev) => (prev + 1) % post.images!.length);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [fullscreenOpen, post]);
 
   const loadPost = async (postId: string) => {
     try {
@@ -286,29 +302,191 @@ export function BlogPostPage() {
         </div>
       </section>
 
-      {/* ── COVER IMAGE ── */}
+      {/* ── CAROUSEL ── */}
       {post.images && post.images.length > 0 && (
-        <div
-          className="w-full"
-          style={{ background: "var(--vera-mei-dark)" }}
-        >
-          <div className="max-w-4xl mx-auto px-6 lg:px-8">
-            <div
-              className="rounded-2xl overflow-hidden -mt-1"
-              style={{
-                boxShadow: "0 16px 60px rgba(0,0,0,0.25)",
-                maxHeight: "480px",
-              }}
-            >
-              <img
-                src={post.images[0]}
-                alt={post.title}
-                className="w-full h-full object-cover"
-                style={{ maxHeight: "480px" }}
-              />
+        <>
+          <div
+            className="w-full"
+            style={{ background: "var(--vera-mei-dark)" }}
+          >
+            <div className="max-w-4xl mx-auto px-6 lg:px-8">
+              <div
+                className="relative rounded-2xl overflow-hidden -mt-1 cursor-zoom-in select-none"
+                style={{
+                  boxShadow: "0 16px 60px rgba(0,0,0,0.25)",
+                  height: "480px",
+                }}
+                onClick={() => {
+                  setFullscreenIndex(carouselIndex);
+                  setFullscreenOpen(true);
+                }}
+              >
+                {/* Images stacked with fade */}
+                {post.images.map((src, i) => (
+                  <img
+                    key={src + i}
+                    src={src}
+                    alt={`${post.title} ${i + 1}`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    style={{
+                      opacity: i === carouselIndex ? 1 : 0,
+                      transition: "opacity 0.5s ease",
+                    }}
+                  />
+                ))}
+
+                {/* Fullscreen hint */}
+                <div
+                  className="absolute top-3 right-3 p-1.5 rounded-lg pointer-events-none"
+                  style={{ background: "rgba(0,0,0,0.35)" }}
+                >
+                  <Maximize2 size={14} color="white" />
+                </div>
+
+                {/* Navigation + dots */}
+                {post.images.length > 1 && (
+                  <>
+                    <button
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors"
+                      style={{ background: "rgba(0,0,0,0.4)", color: "white" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCarouselIndex(
+                          (prev) => (prev - 1 + post.images!.length) % post.images!.length
+                        );
+                      }}
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors"
+                      style={{ background: "rgba(0,0,0,0.4)", color: "white" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCarouselIndex((prev) => (prev + 1) % post.images!.length);
+                      }}
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                      {post.images.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCarouselIndex(i);
+                          }}
+                          className="rounded-full transition-all"
+                          style={{
+                            width: i === carouselIndex ? "20px" : "6px",
+                            height: "6px",
+                            background:
+                              i === carouselIndex ? "white" : "rgba(255,255,255,0.45)",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+
+          {/* ── FULLSCREEN GALLERY ── */}
+          {fullscreenOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center"
+              style={{ background: "rgba(0,0,0,0.93)" }}
+              onClick={() => setFullscreenOpen(false)}
+            >
+              {/* Close */}
+              <button
+                onClick={() => setFullscreenOpen(false)}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
+                style={{ color: "white", zIndex: 60 }}
+              >
+                <X size={22} />
+              </button>
+
+              {/* Counter */}
+              {post.images.length > 1 && (
+                <div
+                  className="absolute top-5 left-1/2 -translate-x-1/2 text-xs px-3 py-1 rounded-full"
+                  style={{
+                    background: "rgba(255,255,255,0.1)",
+                    color: "rgba(255,255,255,0.7)",
+                  }}
+                >
+                  {fullscreenIndex + 1} / {post.images.length}
+                </div>
+              )}
+
+              {/* Main image */}
+              <motion.img
+                key={fullscreenIndex}
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.22 }}
+                src={post.images[fullscreenIndex]}
+                alt={`${post.title} ${fullscreenIndex + 1}`}
+                className="max-w-[88vw] max-h-[80vh] object-contain rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+
+              {/* Prev / Next */}
+              {post.images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFullscreenIndex(
+                        (prev) => (prev - 1 + post.images!.length) % post.images!.length
+                      );
+                    }}
+                    className="absolute left-4 w-11 h-11 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
+                    style={{ color: "white" }}
+                  >
+                    <ChevronLeft size={26} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFullscreenIndex((prev) => (prev + 1) % post.images!.length);
+                    }}
+                    className="absolute right-4 w-11 h-11 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
+                    style={{ color: "white" }}
+                  >
+                    <ChevronRight size={26} />
+                  </button>
+
+                  {/* Thumbnails */}
+                  <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
+                    {post.images.map((src, i) => (
+                      <button
+                        key={i}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFullscreenIndex(i);
+                        }}
+                        className="w-14 h-10 rounded-md overflow-hidden transition-all"
+                        style={{
+                          outline:
+                            i === fullscreenIndex
+                              ? "2px solid white"
+                              : "2px solid transparent",
+                          outlineOffset: "2px",
+                          opacity: i === fullscreenIndex ? 1 : 0.5,
+                        }}
+                      >
+                        <img src={src} alt="" className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </>
       )}
 
       {/* ── CONTENT ── */}

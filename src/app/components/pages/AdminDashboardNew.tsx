@@ -546,8 +546,14 @@ function PostFormLocal({ post, onClose, onSave }: PostFormLocalProps) {
     }
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = async (index: number) => {
+    const url = images[index];
     setImages(images.filter((_, i) => i !== index));
+    try {
+      await FirebasePosts.deleteImage(url);
+    } catch (err) {
+      console.error('Error deleting image from storage:', err);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -608,30 +614,14 @@ function PostFormLocal({ post, onClose, onSave }: PostFormLocalProps) {
               <label className="block text-sm font-medium text-vera-mei-muted mb-2">
                 Status
               </label>
-              <div className="flex gap-3 mt-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="published"
-                    checked={status === 'published'}
-                    onChange={() => setStatus('published')}
-                    className="accent-vera-mei-gold"
-                  />
-                  <span className="text-sm text-vera-mei-dark">Publicado</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="draft"
-                    checked={status === 'draft'}
-                    onChange={() => setStatus('draft')}
-                    className="accent-vera-mei-gold"
-                  />
-                  <span className="text-sm text-vera-mei-dark">Rascunho</span>
-                </label>
-              </div>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as 'published' | 'draft')}
+                className="w-full px-4 py-2 border border-vera-mei-wine/20 rounded-lg bg-white focus:ring-2 focus:ring-vera-mei-gold focus:border-transparent"
+              >
+                <option value="published">Publicado</option>
+                <option value="draft">Rascunho</option>
+              </select>
             </div>
           </div>
 

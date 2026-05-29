@@ -162,4 +162,22 @@ export const FirebasePosts = {
     const { data } = supabase.storage.from('post-images').getPublicUrl(fileName);
     return data.publicUrl;
   },
+
+  async deleteImage(url: string): Promise<void> {
+    // Extract the file path within the bucket from the public URL
+    const marker = '/object/public/post-images/';
+    const idx = url.indexOf(marker);
+    if (idx === -1) return; // Not a managed storage URL, skip
+
+    const filePath = url.slice(idx + marker.length);
+
+    const { error } = await supabase.storage
+      .from('post-images')
+      .remove([filePath]);
+
+    if (error) {
+      console.error('Error deleting image from storage:', error);
+      throw error;
+    }
+  },
 };
