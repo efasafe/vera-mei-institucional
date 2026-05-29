@@ -23,6 +23,8 @@ const placeholderPosts: Post[] = [
     images: [
       "https://images.unsplash.com/photo-1558478551-1a378f63328e?w=800&h=500&fit=crop",
     ],
+    tag: "Marca Pessoal",
+    status: "published",
     createdAt: "2026-05-12T10:00:00Z",
     updatedAt: "2026-05-12T10:00:00Z",
     authorId: "placeholder",
@@ -35,6 +37,8 @@ const placeholderPosts: Post[] = [
     images: [
       "https://images.unsplash.com/photo-1590650046871-92c887180603?w=800&h=500&fit=crop",
     ],
+    tag: "Networking",
+    status: "published",
     createdAt: "2026-05-05T10:00:00Z",
     updatedAt: "2026-05-05T10:00:00Z",
     authorId: "placeholder",
@@ -48,6 +52,8 @@ const placeholderPosts: Post[] = [
     images: [
       "https://images.unsplash.com/photo-1573165662973-4ab3cf3d3508?w=800&h=500&fit=crop",
     ],
+    tag: "Liderança",
+    status: "published",
     createdAt: "2026-04-28T10:00:00Z",
     updatedAt: "2026-04-28T10:00:00Z",
     authorId: "placeholder",
@@ -61,6 +67,8 @@ const placeholderPosts: Post[] = [
     images: [
       "https://images.unsplash.com/photo-1655988940601-7702d8685f95?w=800&h=500&fit=crop",
     ],
+    tag: "Finanças",
+    status: "published",
     createdAt: "2026-04-20T10:00:00Z",
     updatedAt: "2026-04-20T10:00:00Z",
     authorId: "placeholder",
@@ -73,6 +81,8 @@ const placeholderPosts: Post[] = [
     images: [
       "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&h=500&fit=crop",
     ],
+    tag: "Marketing",
+    status: "published",
     createdAt: "2026-04-14T10:00:00Z",
     updatedAt: "2026-04-14T10:00:00Z",
     authorId: "placeholder",
@@ -85,6 +95,8 @@ const placeholderPosts: Post[] = [
     images: [
       "https://images.unsplash.com/photo-1573496130141-209d200cebd8?w=800&h=500&fit=crop",
     ],
+    tag: "Mindset",
+    status: "published",
     createdAt: "2026-04-07T10:00:00Z",
     updatedAt: "2026-04-07T10:00:00Z",
     authorId: "placeholder",
@@ -250,6 +262,17 @@ export function BlogPostPage() {
               <span>{estimateReadTime(post.content)}</span>
               <span>·</span>
               <span>{formatDate(post.createdAt)}</span>
+              {post.tag && (
+                <>
+                  <span>·</span>
+                  <span
+                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                    style={{ background: "rgba(253,248,243,0.15)", color: "var(--vera-mei-cream)" }}
+                  >
+                    {post.tag}
+                  </span>
+                </>
+              )}
               {post.id.startsWith("placeholder-") && (
                 <>
                   <span>·</span>

@@ -19,6 +19,8 @@ interface Post {
   title: string;
   content: string;
   images?: string[];
+  tag?: string;
+  status: 'published' | 'draft';
   createdAt: string;
   updatedAt: string;
   authorId: string;
@@ -30,6 +32,8 @@ const placeholderPosts: Post[] = [
     title: 'Como construir uma marca pessoal poderosa como empreendedora',
     content: 'Sua marca pessoal é seu ativo mais valioso no mundo dos negócios. Descubra como posicioná-la estrategicamente para atrair clientes, parceiros e oportunidades. Neste artigo, você vai aprender as principais estratégias para construir uma presença marcante.',
     images: ['https://images.unsplash.com/photo-1558478551-1a378f63328e?w=800&h=500&fit=crop'],
+    tag: 'Marca Pessoal',
+    status: 'published',
     createdAt: '2026-05-12T10:00:00Z',
     updatedAt: '2026-05-12T10:00:00Z',
     authorId: 'placeholder',
@@ -39,6 +43,8 @@ const placeholderPosts: Post[] = [
     title: '5 estratégias de networking que realmente funcionam para mulheres',
     content: 'Conectar-se vai muito além de trocar cartões. Aprenda como criar relacionamentos estratégicos que impulsionam seu negócio a longo prazo. Descubra técnicas comprovadas para expandir sua rede de contatos.',
     images: ['https://images.unsplash.com/photo-1590650046871-92c887180603?w=800&h=500&fit=crop'],
+    tag: 'Networking',
+    status: 'published',
     createdAt: '2026-05-05T10:00:00Z',
     updatedAt: '2026-05-05T10:00:00Z',
     authorId: 'placeholder',
@@ -48,6 +54,8 @@ const placeholderPosts: Post[] = [
     title: 'Liderança feminina: como navegar ambientes desafiadores com confiança',
     content: 'Desenvolva sua presença executiva e aprenda a liderar com autenticidade em qualquer contexto, sem abrir mão de quem você é. Este guia completo vai te ajudar a se posicionar como líder.',
     images: ['https://images.unsplash.com/photo-1573165662973-4ab3cf3d3508?w=800&h=500&fit=crop'],
+    tag: 'Liderança',
+    status: 'published',
     createdAt: '2026-04-28T10:00:00Z',
     updatedAt: '2026-04-28T10:00:00Z',
     authorId: 'placeholder',
@@ -57,6 +65,8 @@ const placeholderPosts: Post[] = [
     title: 'Gestão financeira para empreendedoras: guia completo para iniciantes',
     content: 'Entender as finanças do seu negócio é fundamental. Aprenda os conceitos essenciais e as ferramentas que toda empreendedora precisa dominar para ter sucesso financeiro.',
     images: ['https://images.unsplash.com/photo-1655988940601-7702d8685f95?w=800&h=500&fit=crop'],
+    tag: 'Finanças',
+    status: 'published',
     createdAt: '2026-04-20T10:00:00Z',
     updatedAt: '2026-04-20T10:00:00Z',
     authorId: 'placeholder',
@@ -66,6 +76,8 @@ const placeholderPosts: Post[] = [
     title: 'Marketing digital para pequenos negócios: por onde começar',
     content: 'Presença digital não é opcional — é necessidade. Descubra como criar uma estratégia de marketing digital eficiente mesmo com orçamento limitado.',
     images: ['https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&h=500&fit=crop'],
+    tag: 'Marketing',
+    status: 'published',
     createdAt: '2026-04-14T10:00:00Z',
     updatedAt: '2026-04-14T10:00:00Z',
     authorId: 'placeholder',
@@ -75,6 +87,8 @@ const placeholderPosts: Post[] = [
     title: 'Mindset empreendedor: como superar o síndrome do impostor',
     content: 'O síndrome do impostor afeta até 70% das mulheres em posições de liderança. Saiba como identificar e superar esse obstáculo invisível que pode estar limitando seu crescimento.',
     images: ['https://images.unsplash.com/photo-1573496130141-209d200cebd8?w=800&h=500&fit=crop'],
+    tag: 'Mindset',
+    status: 'published',
     createdAt: '2026-04-07T10:00:00Z',
     updatedAt: '2026-04-07T10:00:00Z',
     authorId: 'placeholder',
@@ -93,6 +107,7 @@ export function BlogPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   useEffect(() => {
     loadPosts();
@@ -102,7 +117,7 @@ export function BlogPage() {
     try {
       console.log('[BlogPage] Fetching posts from Firebase...');
 
-      const firebasePosts = await FirebasePosts.getAll();
+      const firebasePosts = await FirebasePosts.getAllPublished();
 
       if (firebasePosts.length > 0) {
         setPosts(firebasePosts);
@@ -120,11 +135,16 @@ export function BlogPage() {
     }
   };
 
-  const filteredPosts = posts.filter((post) =>
-    searchQuery === "" ||
-    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    stripHtml(post.content).toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const availableTags = [...new Set(posts.map((p) => p.tag).filter((t): t is string => !!t))];
+
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      stripHtml(post.content).toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTag = selectedTag === null || post.tag === selectedTag;
+    return matchesSearch && matchesTag;
+  });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -195,7 +215,7 @@ export function BlogPage() {
       <section className="py-16" style={{ background: "var(--vera-mei-light)" }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           {/* Search */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-10">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="relative flex-1 max-w-xs">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--vera-mei-muted)" }} />
               <input
@@ -214,6 +234,37 @@ export function BlogPage() {
               />
             </div>
           </div>
+
+          {/* Tag filter chips */}
+          {availableTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-8">
+              <button
+                onClick={() => setSelectedTag(null)}
+                className="px-3.5 py-1.5 rounded-full text-xs font-medium transition-all"
+                style={
+                  selectedTag === null
+                    ? { background: "var(--vera-mei-wine)", color: "white" }
+                    : { background: "white", border: "1px solid var(--vera-mei-border)", color: "var(--vera-mei-muted)" }
+                }
+              >
+                Todos
+              </button>
+              {availableTags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-medium transition-all"
+                  style={
+                    selectedTag === tag
+                      ? { background: "var(--vera-mei-wine)", color: "white" }
+                      : { background: "white", border: "1px solid var(--vera-mei-border)", color: "var(--vera-mei-muted)" }
+                  }
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Grid */}
           {loading ? (
@@ -269,6 +320,14 @@ export function BlogPage() {
                       </div>
                     )}
                     <div className="p-6">
+                      {post.tag && (
+                        <span
+                          className="inline-block mb-3 text-xs px-2.5 py-1 rounded-full"
+                          style={{ background: "var(--vera-mei-blush)", color: "var(--vera-mei-wine)", fontWeight: 600 }}
+                        >
+                          {post.tag}
+                        </span>
+                      )}
                       <h3
                         className="mb-2 leading-snug"
                         style={{

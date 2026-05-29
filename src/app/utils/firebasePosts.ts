@@ -5,6 +5,8 @@ export interface Post {
   title: string;
   content: string;
   images?: string[];
+  tag?: string;
+  status: 'published' | 'draft';
   createdAt: string;
   updatedAt: string;
   authorId: string;
@@ -27,6 +29,33 @@ export const FirebasePosts = {
       title: row.title,
       content: row.content,
       images: row.images || [],
+      tag: row.tag || undefined,
+      status: (row.status as 'published' | 'draft') || 'published',
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      authorId: row.author_id,
+    }));
+  },
+
+  async getAllPublished(): Promise<Post[]> {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching published posts:', error);
+      return [];
+    }
+
+    return (data || []).map((row) => ({
+      id: row.id,
+      title: row.title,
+      content: row.content,
+      images: row.images || [],
+      tag: row.tag || undefined,
+      status: 'published' as const,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       authorId: row.author_id,
@@ -50,6 +79,8 @@ export const FirebasePosts = {
       title: data.title,
       content: data.content,
       images: data.images || [],
+      tag: data.tag || undefined,
+      status: (data.status as 'published' | 'draft') || 'published',
       createdAt: data.created_at,
       updatedAt: data.updated_at,
       authorId: data.author_id,
@@ -63,6 +94,8 @@ export const FirebasePosts = {
         title: post.title,
         content: post.content,
         images: post.images || [],
+        tag: post.tag || null,
+        status: post.status || 'published',
         author_id: post.authorId,
       })
       .select('id')
@@ -82,6 +115,8 @@ export const FirebasePosts = {
     if (updates.content !== undefined) payload.content = updates.content;
     if (updates.images !== undefined) payload.images = updates.images;
     if (updates.authorId !== undefined) payload.author_id = updates.authorId;
+    if (updates.tag !== undefined) payload.tag = updates.tag || null;
+    if (updates.status !== undefined) payload.status = updates.status;
 
     const { error } = await supabase
       .from('posts')

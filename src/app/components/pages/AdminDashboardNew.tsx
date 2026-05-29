@@ -12,6 +12,8 @@ interface Post {
   title: string;
   content: string;
   images?: string[];
+  tag?: string;
+  status: 'published' | 'draft';
   createdAt: string;
   updatedAt: string;
   authorId: string;
@@ -23,6 +25,8 @@ const placeholderPosts: Post[] = [
     title: 'Oportunidade de acesso a consultorias',
     content: 'Sua marca pessoal é seu ativo mais valioso no mundo dos negócios. Descubra como posicioná-la estrategicamente para atrair clientes, parceiros e oportunidades.',
     images: ['https://images.unsplash.com/photo-1558478551-1a378f63328e?w=800&h=500&fit=crop'],
+    tag: 'Marca Pessoal',
+    status: 'published',
     createdAt: '2026-04-14T16:10:00Z',
     updatedAt: '2026-04-14T16:10:00Z',
     authorId: 'placeholder',
@@ -32,6 +36,8 @@ const placeholderPosts: Post[] = [
     title: 'A Força da União',
     content: 'Conectar-se vai muito além de trocar cartões. Aprenda como criar relacionamentos estratégicos que impulsionam seu negócio a longo prazo.',
     images: ['https://images.unsplash.com/photo-1590650046871-92c887180603?w=800&h=500&fit=crop'],
+    tag: 'Networking',
+    status: 'published',
     createdAt: '2026-03-31T08:40:00Z',
     updatedAt: '2026-03-31T08:40:00Z',
     authorId: 'placeholder',
@@ -41,6 +47,8 @@ const placeholderPosts: Post[] = [
     title: 'A Peça que Falta',
     content: 'Desenvolva sua presença executiva e aprenda a liderar com autenticidade em qualquer contexto.',
     images: ['https://images.unsplash.com/photo-1573165662973-4ab3cf3d3508?w=800&h=500&fit=crop'],
+    tag: 'Liderança',
+    status: 'draft',
     createdAt: '2026-03-31T08:39:00Z',
     updatedAt: '2026-03-31T08:39:00Z',
     authorId: 'placeholder',
@@ -50,6 +58,8 @@ const placeholderPosts: Post[] = [
     title: 'O Círculo do Diálogo',
     content: 'Entender as finanças do seu negócio é fundamental para o crescimento sustentável.',
     images: ['https://images.unsplash.com/photo-1655988940601-7702d8685f95?w=800&h=500&fit=crop'],
+    tag: undefined,
+    status: 'published',
     createdAt: '2026-03-31T08:35:00Z',
     updatedAt: '2026-03-31T08:35:00Z',
     authorId: 'placeholder',
@@ -63,6 +73,7 @@ export function AdminDashboardNew() {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -164,9 +175,11 @@ export function AdminDashboardNew() {
     navigate('/login');
   };
 
-  const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || post.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -266,8 +279,14 @@ export function AdminDashboardNew() {
             </div>
             <div className="w-48">
               <label className="block text-sm font-medium text-vera-mei-muted mb-2">Status</label>
-              <select className="w-full px-4 py-2 border border-vera-mei-wine/20 rounded-lg bg-white focus:ring-2 focus:ring-vera-mei-gold focus:border-transparent">
-                <option>Mostrar Tudo</option>
+              <select
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value as 'all' | 'published' | 'draft'); setCurrentPage(1); }}
+                className="w-full px-4 py-2 border border-vera-mei-wine/20 rounded-lg bg-white focus:ring-2 focus:ring-vera-mei-gold focus:border-transparent"
+              >
+                <option value="all">Mostrar Tudo</option>
+                <option value="published">Publicado</option>
+                <option value="draft">Rascunho</option>
               </select>
             </div>
           </div>
@@ -311,7 +330,7 @@ export function AdminDashboardNew() {
                     Título
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-vera-mei-muted uppercase tracking-wider">
-                    Tipo
+                    Tag
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-vera-mei-muted uppercase tracking-wider">
                     Status
@@ -347,13 +366,23 @@ export function AdminDashboardNew() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2.5 py-1 rounded-full bg-vera-mei-blush text-vera-mei-wine text-xs font-medium">
-                            Postagem
-                          </span>
+                          {post.tag ? (
+                            <span className="px-2.5 py-1 rounded-full bg-vera-mei-blush text-vera-mei-wine text-xs font-medium">
+                              {post.tag}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-vera-mei-muted/50">—</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2.5 py-1 rounded-full bg-vera-mei-sage/20 text-vera-mei-sage text-xs font-medium">
-                            Publicado
+                          <span
+                            className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                              post.status === 'published'
+                                ? 'bg-vera-mei-sage/20 text-vera-mei-sage'
+                                : 'bg-amber-100 text-amber-700'
+                            }`}
+                          >
+                            {post.status === 'published' ? 'Publicado' : 'Rascunho'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-vera-mei-muted">
@@ -478,13 +507,15 @@ export function AdminDashboardNew() {
 interface PostFormLocalProps {
   post: Post | null;
   onClose: () => void;
-  onSave: (data: { title: string; content: string; images: string[] }) => Promise<void>;
+  onSave: (data: { title: string; content: string; images: string[]; tag: string; status: 'published' | 'draft' }) => Promise<void>;
 }
 
 function PostFormLocal({ post, onClose, onSave }: PostFormLocalProps) {
   const [title, setTitle] = useState(post?.title || '');
   const [content, setContent] = useState(post?.content || '');
   const [images, setImages] = useState<string[]>(post?.images || []);
+  const [tag, setTag] = useState(post?.tag || '');
+  const [status, setStatus] = useState<'published' | 'draft'>(post?.status || 'published');
   const [uploading, setUploading] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -525,7 +556,7 @@ function PostFormLocal({ post, onClose, onSave }: PostFormLocalProps) {
       alert('O título é obrigatório');
       return;
     }
-    await onSave({ title, content, images });
+    await onSave({ title, content, images, tag, status });
   };
 
   return (
@@ -557,6 +588,51 @@ function PostFormLocal({ post, onClose, onSave }: PostFormLocalProps) {
               className="w-full px-4 py-2 border border-vera-mei-wine/20 rounded-lg focus:ring-2 focus:ring-vera-mei-gold focus:border-transparent"
               placeholder="Digite o título do post"
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="tag" className="block text-sm font-medium text-vera-mei-muted mb-2">
+                Tag <span className="text-vera-mei-muted/60 font-normal">(opcional)</span>
+              </label>
+              <input
+                id="tag"
+                type="text"
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}
+                className="w-full px-4 py-2 border border-vera-mei-wine/20 rounded-lg focus:ring-2 focus:ring-vera-mei-gold focus:border-transparent"
+                placeholder="Ex: Liderança, Marketing..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-vera-mei-muted mb-2">
+                Status
+              </label>
+              <div className="flex gap-3 mt-1">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="published"
+                    checked={status === 'published'}
+                    onChange={() => setStatus('published')}
+                    className="accent-vera-mei-gold"
+                  />
+                  <span className="text-sm text-vera-mei-dark">Publicado</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="draft"
+                    checked={status === 'draft'}
+                    onChange={() => setStatus('draft')}
+                    className="accent-vera-mei-gold"
+                  />
+                  <span className="text-sm text-vera-mei-dark">Rascunho</span>
+                </label>
+              </div>
+            </div>
           </div>
 
           <div>
